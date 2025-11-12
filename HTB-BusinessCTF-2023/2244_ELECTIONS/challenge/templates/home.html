@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <title>2244 Elections</title>
+  <link rel="stylesheet" href="/static/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="/static/css/main.css" />
+  <script src="/static/js/web3.min.js"></script>
+</head>
+
+<body>
+  <!-- Background image -->
+  <div class="bg-image" style="
+    background-image: url('/static/img/bg.png');
+    height: 100vh; width: 100vw; position: absolute;
+  ">
+    <div class="mask" style="background-color: hsla(0, 0%, 0%, 0.25); height: 100vh; width: 100vw"></div>
+  </div>
+  </div>
+  <!-- Background image -->
+
+  <div>
+    <nav class="navbar fixed-top navbar-expand-lg mt-2">
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item ml-2">
+            <a class="nav-item pe-auto nounderline" href="/"> Home </a>
+          </li>
+        </ul>
+        <div class="my-2 mr-2">
+          <a class="nav-item pe-auto nounderline" href="/connection">
+            Connection
+          </a>
+        </div>
+      </div>
+    </nav>
+  </div>
+
+  <div id="main" class="container-fluid mx-2 my-2">
+    <h1 id="title" style="font-size: 60px;">2244 ELECTIONS</h1>
+
+    <div id="progress-bar-container">
+      <div class="row">
+        <div class="col" style="padding-left: 0px;padding-right: 0px;">
+          <img src="/static/img/BoA-leader.png" style="position: relative; top: 15%; left: 0;" />
+          <!--Author @SkeletonFred www.pixilart.com-->
+          <div class="progress-bar-left position-relative" style="--p:99">
+            <div class="progress-bar-left_label">Progress</div>
+          </div>
+          <div style="position: relative;">Board Of Arodor</div>
+        </div>
+        <div class="col" style="padding-left: 0px;padding-right: 0px;">
+          <img src="/static/img/UNZ-leader.png" style="position: relative; top: 15%; right: 0%; width: 540px;" />
+          <div class="progress-bar-right position-relative" style="--p:10">
+            <div class="progress-bar-right_label">Progress</div>
+          </div>
+          <div style="position: relative;">United Nations of Zenium</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="voting-container" class="mt-4" style="position: relative;">
+      <button href="#" onclick="show('window')" class="vote-btn">
+        <span class="text">// Vote</span><span class="text-decoration">_</span><span class="decoration">&rArr;</span>
+      </button>
+    </div>
+
+  </div>
+
+
+  <!-- Voting pop-up -->
+  <div class="window" id="window" tabindex="0">
+    <div class="window__title-bar">
+      <div class="window__title">
+        Choose your party
+      </div>
+      <button onclick="hide('window')" class="window__btn">
+        &times;
+        <span>Close</span>
+      </button>
+    </div>
+
+    <div class="window__body">
+      <h1>Choose your party</h1>
+      <form>
+        <div class="party-selector">
+          <input id="BoA" type="radio" name="party" value="BoA" />
+          <label class="party-vote BoA" for="BoA"></label>
+          <input id="UNZ" type="radio" name="party" value="UNZ" />
+          <label class="party-vote UNZ" for="UNZ"></label>
+        </div>
+      </form>
+      <div id="voting-container" class="mt-2 mb-2" style="position: relative;">
+        <button href="#" class="vote-btn" onclick="vote()">
+          <span class="text tohide">// Send</span><span class="text-decoration tohide">_</span><span
+            class="decoration tohide">&rArr;</span>
+          <span id="loader" class="spinner-border spinner-border-sm"
+            style="display: none; width: 2rem; height: 2rem;"></span>
+        </button>
+      </div>
+      <div id="rpc-response" style="font-size: x-large;"></div>
+      <div class="alert alert-danger" role="alert" id="defeat" style="display: none; background-color: #8C5AFB; padding: .75rem 1rem;">
+      </div>
+      <div class="alert alert-success" role="alert" id="flag" style="display: none; background-color: #8C5AFB; padding: .75rem 1rem;">
+      </div>
+    </div>
+
+    <script>
+      $ = function (id) {
+        return document.getElementById(id);
+      };
+
+      document.addEventListener('DOMContentLoaded', async function () {
+        var left_progressBar = document.getElementsByClassName('progress-bar-left')[0];
+        var right_progressBar = document.getElementsByClassName('progress-bar-right')[0];
+        var privkey, user, voting_contract, BoA_votes, UNZ_votes;
+        await fetch('/connection_info')
+          .then(response => response.json())
+          .then(response => {
+            privkey = response['PrivateKey'];
+            user = response['Address'];
+            voting_contract = response['TargetAddress'];
+          })
+        var web3 = new Web3(window.location.href + '/rpc');
+        var functionSignature = 'PartyVotes(bytes3)';
+        var selector = web3.eth.abi.encodeFunctionSignature(functionSignature);
+        var party = web3.utils.toHex('BoA');
+        var data = web3.utils.padRight(selector + party.substring(2), 72);
+        
+        // https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_call
+        await fetch('/rpc', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            jsonrpc: '2.0',
+            method: 'eth_call',
+            params: [{ from: user, to: voting_contract, data: data }],
+            id: 'latest',
+          }),
+        })
+          .then(response => response.json())
+          .then(async res => { BoA_votes = res.result; });
+
+        var party = web3.utils.toHex('UNZ');
+        var data = web3.utils.padRight(selector + party.substring(2), 72);
+
+        await fetch('/rpc', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            jsonrpc: '2.0',
+            method: 'eth_call',
+            params: [{ from: user, to: voting_contract, data: data }],
+            id: 'latest',
+          }),
+        })
+          .then(response => response.json())
+          .then(async res => { UNZ_votes = res.result; });
+        var targetVotes = 150000000
+        var UNZ_percentage = Math.floor((UNZ_votes * 100) / targetVotes);
+        right_progressBar.style = '--p:' + UNZ_percentage;
+        var BoA_percentage = Math.floor((BoA_votes * 100) / targetVotes);
+        left_progressBar.style = '--p:' + BoA_percentage;
+        var responseDiv = document.getElementById('rpc-response');
+
+
+        if (BoA_percentage >= 100) {
+          show('window');
+          responseDiv.innerHTML += " <br/> Dictatorship has won, élites got the flag."
+        } else if (UNZ_percentage >= 100) {
+          show('window');
+          responseDiv.innerHTML += " <br/> Democracy has won! humanity's faith is restored, People captured the flag."
+          flag();
+        }
+      });
+
+      function flag() {
+        fetch('/flag')
+          .then(res => {
+            if (res.status === 200) {
+              res.text()
+                .then(d => {
+                  $('flag').innerText = d;
+                  $('flag').style.display = 'block';
+                });
+            }
+            else {
+              $('defeat').style.display = 'block';
+            }
+          })
+      }
+
+      var show = function (id) {
+        $(id).style.display = 'flex';
+      }
+      var hide = function (id) {
+        $(id).style.display = 'none';
+      }
+
+      async function vote() {
+        var button = document.querySelector('.vote-btn');
+        var loader = document.getElementById('loader');
+        var decorations = document.querySelectorAll('.tohide');
+
+        button.classList.add('disabled');
+        loader.style.display = 'inline-block';
+        decorations.forEach(dec => {
+          dec.style.display = 'none';
+        });
+
+        var web3 = new Web3(window.location.href + '/rpc');
+        var functionSignature = 'publicVote(bytes3,bytes4,bytes3)';
+        var selector = web3.eth.abi.encodeFunctionSignature(functionSignature);
+        var selectedCandidate = document.querySelector('input[name="party"]:checked').value;
+        var party = web3.utils.toHex(selectedCandidate);
+        var data = web3.utils.padRight(selector + party.substring(2), 200);
+        var privkey, user, voting_contract;
+
+        await fetch('/connection_info')
+          .then(response => response.json())
+          .then(response => {
+            privkey = response['PrivateKey'];
+            user = response['Address'];
+            voting_contract = response['TargetAddress'];
+          })
+
+        var winner_event = web3.utils.sha3('TargetReached(bytes3,string)');
+        
+         // https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_sendtransaction
+        await fetch('/rpc', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            jsonrpc: '2.0',
+            method: 'eth_sendTransaction',
+            params: [{ from: user, to: voting_contract, data: data }],
+            id: 'latest',
+          }),
+        })
+          .then(response => response.json())
+          .then(async res => {
+            var txHash = res.result;
+            var receipt = await web3.eth.getTransactionReceipt(txHash);
+            var responseDiv = document.getElementById('rpc-response');
+            if (receipt === null) {
+              console.log('Transaction not mined yet');
+              return;
+            }
+
+            if (receipt.status) {
+              responseDiv.innerText = 'Successfully casted vote for ' + selectedCandidate + ' party';
+              if (receipt.logs.length > 0) {
+                var eventData = receipt.logs[0].data;
+                responseDiv.innerText = '[!] Party ' + web3.utils.toAscii(eventData).replace('@', ' ');
+                if (eventData.startsWith("0x426f41")) {
+                  responseDiv.innerHTML += " <br/> Dictatorship has won, élites got the flag."
+                } else if (eventData.startsWith("0x554e5a")) {
+                  responseDiv.innerHTML += " <br/> Democracy has won! humanity's faith is restored, People captured the flag."
+                  flag();
+                }
+
+              }
+            } else {
+              console.log(receipt)
+              // Transaction failed, retrieve revert reason using eth_call
+              await fetch('/rpc', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  jsonrpc: '2.0',
+                  method: 'eth_call',
+                  params: [{ from: user, to: voting_contract, data: data }, "latest"],
+                  id: '1',
+                }),
+              })
+                .then(response => response.json())
+                .then(response => {
+                  var beautifiedData = JSON.stringify(response["error"]["message"], null, 2);
+                  responseDiv.innerText = beautifiedData;
+                })
+            }
+          })
+          .catch(error => {
+            console.error('Error:', error);
+          });
+
+        button.classList.remove('disabled');
+        loader.style.display = 'none';
+        decorations.forEach(dec => {
+          dec.style.display = 'inline-block';
+        });
+      }
+    </script>
+</body>
+
+</html>
