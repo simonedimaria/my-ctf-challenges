@@ -41,14 +41,16 @@ def collect_challenges():
                 if readme.exists():
                     meta, _ = read_front_matter(readme)
                     if meta:
+                        # directory relative to repo root (not the README itself)
+                        challenge_dir_rel = item.relative_to(REPO_ROOT).as_posix()
                         challenges.append({
                             "title": meta.get("title", item.name),
-                            "date": meta.get("date", ""),
+                            "date": meta.get("date", ""), # keep for sorting
                             "summary": meta.get("summary", ""),
                             "categories": meta.get("categories", []),
                             "difficulty": meta.get("difficulty", ""),
                             "tags": meta.get("tags", []),
-                            "path": str(readme.relative_to(REPO_ROOT)),
+                            "dir": challenge_dir_rel,
                         })
         # sort challenges by date desc (blank dates go last)
         def sort_key(c):
@@ -65,15 +67,14 @@ def render_table_for_event(event_name, challenges):
     if not challenges:
         lines.append("_No challenges found for this event._")
     else:
-        lines.append("| Title | Date | Category | Difficulty | Tags | Path |")
-        lines.append("| ----- | ---- | -------- | ---------- | ---- | ---- |")
+        lines.append("| Title | Category | Difficulty | Tags |")
+        lines.append("| ----- | -------- | ---------- | ---- |")
         for ch in challenges:
             cats = ", ".join(ch["categories"]) if isinstance(ch["categories"], list) else ch["categories"]
             tags = ", ".join(ch["tags"]) if isinstance(ch["tags"], list) else ch["tags"]
-            # make path a relative link
-            path_link = f"[link]({ch['path']})"
+            title_link = f"[{ch['title']}]({ch['dir']})"
             lines.append(
-                f"| {ch['title']} | {ch['date']} | {cats} | {ch['difficulty']} | {tags} | {path_link} |"
+                f"| {title_link} | {cats} | {ch['difficulty']} | {tags} |"
             )
     lines.append(f"<!-- CHALLENGES:EVENT={event_name}:END -->")
     lines.append("")
