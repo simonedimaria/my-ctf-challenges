@@ -1,0 +1,40 @@
+name: Update challenge index
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - '**/README.md'
+      - '.github/scripts/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: setup python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: install python deps
+        run: pip install pyyaml
+
+      - name: update root README
+        run: python .github/scripts/update_challenges_index.py
+
+      - name: commit and push if updates
+        run: |
+          if [[ -n "$(git status --porcelain)" ]]; then
+            git config user.name "simone's favourite clanker 🤖"
+            git config user.email "12881861+simonedimaria@users.noreply.github.com"
+            git commit -am "chore: update challenge index"
+            git push
+          fi
+
