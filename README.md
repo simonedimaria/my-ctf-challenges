@@ -11,3 +11,14 @@ My authored CTF challenges sources and official writeups.
 <!-- CHALLENGES:EVENT=HTB-BusinessCTF-2023:END -->
 
 
+
+
+<!-- CHALLENGES:EVENT=HTB-BusinessCTF-2024:START -->
+### HTB-BusinessCTF-2024
+
+| Title | Category | Difficulty | Tags |
+| ----- | -------- | ---------- | ---- |
+| [HTB Business CTF 2024 - Brokenswap [Author Writeup]](HTB-BusinessCTF-2024/Brokenswap) | blockchain | medium | authored, DEX, access-control, x*y=k |
+| [HTB Business CTF 2024 - MetaVault [Author Writeup]](HTB-BusinessCTF-2024/MetaVault) | blockchain | easy | authored, metadata, IPFS |
+| [HTB Business CTF 2024 - Recruitment [Author Writeup]](HTB-BusinessCTF-2024/Recruitment) | blockchain | very-easy | authored, warmup |
+<!-- CHALLENGES:EVENT=HTB-BusinessCTF-2024:END -->
