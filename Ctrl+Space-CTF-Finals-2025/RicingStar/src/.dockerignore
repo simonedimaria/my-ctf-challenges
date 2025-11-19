@@ -1,0 +1,8 @@
+# Node / JS (app)
+app/node_modules
+app/build
+app/.npm
+
+# Python (bot)
+bot/__pycache__
+bot/venv

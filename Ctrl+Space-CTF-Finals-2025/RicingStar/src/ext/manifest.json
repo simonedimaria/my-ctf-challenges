@@ -1,0 +1,23 @@
+{
+  "manifest_version": 3,
+  "name": "Ctrl+Space CTF special edition firefox theme",
+  "version": "1.0.0",
+  "description": "✨",
+  "permissions": [
+    "scripting"
+  ],
+  "host_permissions": [
+    "*://*/*"
+  ],
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "externally_connectable": {
+    "matches": ["http://127.0.0.1:80", "http://localhost:80"]
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "someonethatcantdospacepwnbutwritesffthemes@mhackeroni.it"
+    }
+  }
+}

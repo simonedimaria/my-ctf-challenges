@@ -1,0 +1,1 @@
+http,https://ricingstar.challenges.ctrl-space.gg/,80

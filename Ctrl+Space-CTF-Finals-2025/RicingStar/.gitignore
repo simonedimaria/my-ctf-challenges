@@ -1,0 +1,13 @@
+# Node / JS
+node_modules/
+build/
+
+# Python
+__pycache__/
+venv/
+
+# Selenium/Firefox
+geckodriver.log
+
+# Misc
+TODO.md

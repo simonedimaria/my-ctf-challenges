@@ -1,0 +1,211 @@
+@font-face {
+  font-family: 'VCR OSD Mono';
+  src: url('/assets/VCR_OSD_MONO_1.001.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --bg: #090D29;
+}
+
+* {
+  font-family: 'VCR OSD Mono', monospace !important;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: #cdd6f4;
+  font-family: 'VCR OSD Mono', monospace;
+  letter-spacing: 0.02em;
+}
+
+canvas {
+  display: block;
+  width: 100vw;
+  height: 100vh;
+}
+
+/* Toolbar (editor) */
+.toolbar {
+  position: fixed;
+  inset: 12px auto auto 12px;
+  z-index: 10;
+  display: none;
+  grid-template-columns: repeat(8, auto);
+  gap: 10px 12px;
+  align-items: end;
+  background: rgba(20, 24, 53, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 10px 12px;
+  border-radius: 12px;
+  backdrop-filter: blur(6px);
+}
+
+.toolbar.is-open {
+  display: grid;
+}
+
+.toolbar h3 {
+  grid-column: 1 / -1;
+  margin: 10px 0 0 0;
+  font-size: 12px;
+  font-weight: 700;
+  opacity: 0.9;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.toolbar label {
+  display: grid;
+  gap: 4px;
+  font-size: 12px;
+}
+
+.toolbar input[type='number'],
+.toolbar input[type='text'],
+.toolbar input[type='color'],
+.toolbar select {
+  width: 8rem;
+  background: transparent;
+  color: inherit;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 8px;
+  padding: 6px 8px;
+  outline: none;
+}
+
+.toolbar button {
+  appearance: none;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.08);
+  color: inherit;
+  border-radius: 10px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+.toolbar button:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.hint {
+  display: none;
+  font-size: 10px;
+  opacity: 0.8;
+}
+
+.toolbar.is-open .hint {
+  display: block;
+}
+
+.toolbar-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+
+/* Hero (landing content) */
+.hero {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 15;
+  text-align: center;
+  max-width: min(90vw, 900px);
+  background: rgba(9, 13, 41, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 24px 28px;
+  border-radius: 16px;
+  backdrop-filter: blur(4px);
+}
+
+.hero h1 {
+  margin: 0 0 10px;
+  font-size: clamp(28px, 5.5vw, 56px);
+  letter-spacing: 0.06em;
+  background: radial-gradient(circle, rgba(254, 198, 42, 1) 0%, rgba(159, 40, 142, 1) 50%, rgba(0, 162, 255, 1) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.hero p {
+  margin: 0 0 18px;
+  font-size: 1.5em;
+  opacity: 0.9;
+}
+
+.hero .cta {
+  display: inline-flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.btn {
+  appearance: none;
+  cursor: pointer;
+  font-weight: 600;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  padding: 10px 16px;
+  color: #e8ecff;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.btn:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.btn.primary {
+  border-color: rgba(119, 169, 255, 0.6);
+  background: rgba(119, 169, 255, 0.12);
+  font-size: 1em;
+}
+
+.btn.primary:hover {
+  background: rgba(119, 169, 255, 0.22);
+}
+
+/* Release notes */
+.release {
+  margin-top: 18px;
+  text-align: left;
+  font-size: 1.2em;
+  opacity: 0.9;
+}
+
+.release h4 {
+  margin: 0 0 6px;
+  font-size: 1em;
+  letter-spacing: 0.12em;
+  opacity: 0.8;
+}
+
+.release ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+/* Top-right logo overlay */
+.logo {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  z-index: 20;
+  height: 15vh;
+  pointer-events: none;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.6));
+}

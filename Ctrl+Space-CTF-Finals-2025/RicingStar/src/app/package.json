@@ -1,0 +1,16 @@
+{
+  "name": "ctrl-space-starfield",
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "dev": "vite dev",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@sveltejs/adapter-static": "^3.0.4",
+    "@sveltejs/kit": "^2.43.2",
+    "svelte": "^5.39.5",
+    "vite": "^7.1.7"
+  }
+}
