@@ -1,0 +1,1 @@
+/usr/libexec/postgresql15/postgres "-c" "max_connections=200" "-c" "client_connection_check_interval=60000" "-D" "/var/lib/postgresql/data/"

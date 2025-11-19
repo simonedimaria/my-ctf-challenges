@@ -1,0 +1,6 @@
+requests
+Flask
+Flask-Cors
+gunicorn
+web3
+eth-account
