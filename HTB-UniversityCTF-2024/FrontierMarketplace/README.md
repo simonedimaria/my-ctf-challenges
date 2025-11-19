@@ -1,10 +1,14 @@
-# FrontierMarketplace
-
-![img](./assets/ChallengeBanner.png)
 ---
-<p align="center">
-    <img src="./assets/EventBanner.jpg" />
-</p>
+date: 2024-12-05T00:00:03+01:00
+title: HTB University CTF 2024 - FrontierMarketplace [Author Writeup]
+summary: Author writeup for the "FrontierMarketplace" medium blockchain challenge from HTB University CTF 2024.
+categories: ["blockchain"]
+difficulty: "medium"
+tags: ["authored", "ERC-721", "approvals"]
+showHero: true
+---
+
+# FrontierMarketplace
 
 > 5<sup>th</sup> Dec 2024 \
 Prepared By: perrythepwner \
@@ -13,29 +17,29 @@ Difficulty: <font color=orange>Medium</font>
 
 ---
 
-# TLDR
+## TLDR
 This challenge consists on exploiting a custom ERC721 implementation that doesn't clear approvals after token ownership transfer, and can be leveraged by approving an account in control, selling the NFT and reclaming ownership again after transfer because of the non cleared approval.
 
-# Description
+## Description
 > In the lawless expanses of the Frontier Board, digital assets hold immense value and power. Among these assets, the FrontierNFTs are the most sought-after, representing unique and valuable items that can influence the balance of power within the cluster.  
 This government has managed to win a lot of approval and consensus from the people, through a strong propaganda campaign through their "FrontierNFT" which is receiving a lot of demand. Your goal is to somehow disrupt the political ride of the Frontier Board party.
 
-# Skills Required
+## Skills Required
 - Basic understanding of Solidity and smart contracts
 - Interaction with smart contracts
 - Familiarity with ERC721 standard
 
-# Skills Learned
+## Skills Learned
 - Identifying vulnerabilities in custom ERC721 implementations
 
-# Challenge Scenario
+## Challenge Scenario
 In the untamed territories ruled by the Frontier Board, digital assets possess immense value and authority. Among these assets, FrontierNFTs are the most coveted, representing unique and valuable items that can significantly influence the balance of power within the cluster.  
 The Frontier Board has successfully garnered widespread approval and consensus from the populace through a robust propaganda campaign centered around their "FrontierNFT," which is experiencing unprecedented demand. Your mission is to disrupt the political dominance of the Frontier Board by hacking the FrontierNFT contract.
 
-# Analyzing the Source Code
+## Analyzing the Source Code
 The challenge provides the source code of the following contracts to players.
 
-## `Setup.sol`
+### `Setup.sol`
 
 ```solidity
 // SPDX-License-Identifier: MIT
@@ -67,7 +71,7 @@ contract Setup {
 
 The Setup contract deploys the `FrontierNFT` and `FrontierMarketplace` contracts. In order to solve this challenge, the player must have a balance > of 10 ethers while also having at least one FrontierNFT token.
 
-## `FrontierMarketplace.sol`
+### `FrontierMarketplace.sol`
 The FrontierMarketplace contract serves as "frontend" for the NFT contract, we'll see why later. Here's an overview of the code:
 
 ```solidity
@@ -112,7 +116,7 @@ The marketplace exposes two functions to users:
 
 At the moment, nothing seems off, we understand that maybe the solution involves buying an NFT and request a refund for it (to get the ethers back) but somehow still owning the NFT after the refund. Let's see how the FrontierNFT token contracts looks like.
 
-## `FrontierNFT.sol`
+### `FrontierNFT.sol`
 The FrontierNFT is a custom ERC721 standard, which looks pretty similar to the actual standard at first glance:
 
 ```solidity
@@ -263,7 +267,7 @@ function approve(address to, uint256 tokenId) public {
 }
 ```
 
-## NFT contract allows parallel token-specific and collection approvals  
+### NFT contract allows parallel token-specific and collection approvals  
 Looking at them side by side, we notice the missing `auth` parameter, that in OZ implementation enables another layer of security; we can notice also that both of the implementation require the sender to be the owner of the `tokenId` we want to approve for address `to`. Both sets the `_tokenApprovals` mapping and emit the `Approval` but the OZ implementation checks for zero address and for `isApprovedForAll`.  
 In the `FrontierNFT` contract the zero address check is being made in the `ownerOf` function, so the only actual missing check is the following line:
 
@@ -274,7 +278,7 @@ In the `FrontierNFT` contract the zero address check is being made in the `owner
 That means we can both emit a single-user approval for given `tokenId` but also allowing an address to have approval for an arbitrary token in the meantime...How that could be useful?  
 The `setApprovalForAll` function looks the same on both contracts, meaning we need to investigate further and keep in mind that missing check.  
 
-## `transferFrom` doesn't clear approvals after token ownership transfer
+### `transferFrom` doesn't clear approvals after token ownership transfer
 The only missing function to analyze is the one responsible for transferring tokens. Let's put them side by side.
 
 `openzeppelin/contracts/token/ERC721/ERC721.sol:_transfer`
@@ -383,7 +387,7 @@ How can we exploit this? Think of the following scenario:
 5) Player calls `transferFrom` for himself of tokenId `1`, despite having no ownership, thanks to the dangling approval set at step 2.
 6) Player has the initial balance of `20 ethers` but got 1 free FrontierNFT token, and can repeat from step 1 indefinitely.
 
-# Exploitation
+## Exploitation
 
 To reproduce the scenario, a player must perform the following sequence of action:
 ```py
@@ -398,4 +402,4 @@ To reproduce the scenario, a player must perform the following sequence of actio
 see the full exploitation script [here](./htb/solver.py).
 
 ---
-> HTB{g1mme_1t_b4ck}
+> `HTB{g1mme_1t_b4ck}`

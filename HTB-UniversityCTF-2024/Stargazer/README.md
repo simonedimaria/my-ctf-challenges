@@ -1,10 +1,14 @@
-# Stargazer
-
-![img](./assets/ChallengeBanner.png)
 ---
-<p align="center">
-    <img src="./assets/EventBanner.jpg" />
-</p>
+date: 2024-12-05T00:00:04+01:00
+title: HTB University CTF 2024 - Stargazer [Author Writeup]
+summary: Author writeup for the "Stargazer" hard blockchain challenge from HTB University CTF 2024.
+categories: ["blockchain"]
+difficulty: "hard"
+tags: ["authored", "proxy-pattern", "UUPS", "ERC-7201", "storage-collision", "ecrecover"]
+showHero: true
+---
+
+# Stargazer
 
 > 10<sup>th</sup> Aug 2024 \
 Prepared By: perrythepwner \
@@ -13,32 +17,29 @@ Difficulty: <font color=red>Hard</font>
 
 ---
 
-# TLDR
+## TLDR
 The challenge consists in exploiting `ecrecover` signature malleability in a UUPSUpgradeable contract to authorize implementation upgrade and override ERC7201 storage.  
 
-# Description
-> The Frontier Cluster teeters on the brink of collapse. The planet is ravaged by exploitation and environmental decay, driven by ruthless corporations that have merged into a singular, omnipotent entity known as "The Frontier Board." In a desperate bid to secure humanity's future, a visionary engineer constructs the "***Stargazer***" — a conscious and empathetic machine designed to endure the harshest conditions of unknown planets.  
+## Description
+> The Frontier Cluster teeters on the brink of collapse. The planet is ravaged by exploitation and environmental decay, driven by ruthless corporations that have merged into a singular, omnipotent entity known as "The Frontier Board." In a desperate bid to secure humanity's future, a visionary engineer constructs the "***Stargazer***": a conscious and empathetic machine designed to endure the harshest conditions of unknown planets.  
 Stargazer's mission is monumental: to explore uncharted worlds, gather crucial data, and identify new planets suitable for colonization. Equipped with advanced sensors and a soulful artificial intelligence, it traverses the cosmos, witnessing celestial wonders beyond human imagination.  
-Amidst its journey through the stars, Stargazer develops a profound sense of melancholy. Despite observing breathtaking cosmic events — supernovae, nebulae, and elusive shooting stars — it is burdened by the realization that many of these phenomena are transient, never to be witnessed again. One such event is the "Starry Spurr," a rare shooting star emitting a unique cosmic frequency, occurring once every millennium.  
+Amidst its journey through the stars, Stargazer develops a profound sense of melancholy. Despite observing breathtaking cosmic events (supernovae, nebulae, and elusive shooting stars) it is burdened by the realization that many of these phenomena are transient, never to be witnessed again. One such event is the "Starry Spurr," a rare shooting star emitting a unique cosmic frequency, occurring once every millennium.  
 Your goal is to deceive the machine kernel into believing that it is experiencing the advent of "Starry Spurr" for the second time, in order to bring back joy and solace to the machine.
 
 
-# Skills Required
+## Skills Required
 - Knowledge of Ethereum's storage layout and storage pointers
 - Familiarity with proxy contracts and upgradeability patterns (UUPS)
 - Knowledge of Ethereum signatures and ECDSA
 
-# Skills Learned
+## Skills Learned
 - Identifying and exploiting vulnerabilities in upgradeable smart contracts
 - Exploiting signature malleability
 
-# Challenge scenario
-[...]
 
+## Analyzing the source code
 
-# Analyzing the source code
-
-**Setup.sol**
+### **`Setup.sol`**
 ```solidity
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
@@ -98,7 +99,7 @@ The setup involves deploying the implementation code, initializing it, calling a
 In order to solve this challenge, we need to "override" the Stargazer "memory" and make it believe the past sightings of the stars "*Nova-GLIM_007*" and "*Starry-SPURR_001*", are actually a recurrent event and that it's the second time he's seeing them.  
 In other words, the Stargazer mapping that maps a `starId` to their number of occurrences, which must be greater than `1` for both stars.
 
-## **`Stargazer.sol`**
+### **`Stargazer.sol`**
 ```solidity
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
@@ -149,7 +150,7 @@ The [ERC-1967 standard](https://eips.ethereum.org/EIPS/eip-1967) defines a consi
 The standard is being used by the UUPS (Universal Upgradeable Proxy Standard) and the Transparent Upgradeable Proxy Pattern. As we'll see later, that challenge is based on the UUPS pattern.  
 In the end, the `Stargazer` contract is just an OpenZeppelin implementation of ERC-1967, with a cool ascii art.
 
-## **`StargazerKernel.sol`**
+### **`StargazerKernel.sol`**
 ```solidity
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
@@ -353,7 +354,7 @@ function createPASKATicket(bytes memory _signature) public onlyProxy {
 Any users can request a `PASKATicket` creation, and when `$.kernelMaintainers[tx.origin].PASKATicketsNonce` will be evaluated with an address not being part of the registered `kernelMaintainers`, it will try to fetch **uninitialized storage pointer** that will automatically returns `0`. *That means, even though the player is not part of  `kernelMaintainers`, it can temporarily impersonate one, by replaying the first `PASKATicket` of every `KernelMaintainer` since the first valid ticket for any maintainer will also have nonce `0`!*  
 Furthermore, once the signature checks have been passed, no further checks are made on the address issuing the request for a `PASKATicket`, effectively creating a valid entry for the address of the player, despite not being part of `kernelMaintainers`.
 
-# Exploitation
+## Exploitation
 
 A successful exploit scenario will be the following:  
 1) KernelMaintainer Bob initializes the `StargazerKernel` contract.

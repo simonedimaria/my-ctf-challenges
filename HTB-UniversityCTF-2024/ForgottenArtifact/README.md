@@ -1,10 +1,14 @@
-# ForgottenArtifact
-
-![img](./assets/ChallengeBanner.png)
 ---
-<p align="center">
-    <img src="./assets/EventBanner.jpg" />
-</p>
+date: 2024-12-05T00:00:02+01:00
+title: HTB University CTF 2024 - ForgottenArtifact [Author Writeup]
+summary: Author writeup for the "ForgottenArtifact" easy blockchain challenge from HTB University CTF 2024.
+categories: ["blockchain"]
+difficulty: "easy"
+tags: ["authored", "EVM", "storage"]
+showHero: true
+---
+
+# ForgottenArtifact
 
 5<sup>th</sup> Dec 2024 \
 Prepared By: perrythepwner \
@@ -13,27 +17,27 @@ Difficulty: <font color=green>Easy</font>
 
 ---
 
-# TLDR
+## TLDR
 This challenge consists of calculating the storage pointer of a struct stored in a non-standard location in the contract memory to re-discover the "forgotten artifact" called "Starry Spurr".
 
-# Description
+## Description
 > Deep within the uncharted territories of the Frontier Cluster lies a relic of immense power and mystery—the forgotten artifact known as "The Starry Spurr." Hidden away by the oppressive Frontier Board, its location has been lost to time. However, whispers persist that the artifact can only be recovered by those who understand the intricate mechanisms of the ledger technology. Your goal is to rediscover its location before the Frontier Board finds it and claim possession for the sake of power and wealth.
 
-# Skills Required
+## Skills Required
 - Basic understanding of Solidity and smart contracts
 - Interaction with smart contracts
 - Knowledge of Ethereum's storage layout and storage pointers
 
-# Skills Learned
+## Skills Learned
 - Calculating and manipulating non-standard location of storage slots in Solidity
 
-# Challenge Scenario
+## Challenge Scenario
 The Frontier Cluster, once a beacon of hope and prosperity, has been overshadowed by the ruthless Frontier Board. Among the many secrets they guard, "The Starry Spurr" remains the most coveted artifact, believed to possess unparalleled power. This artifact was hidden using sophisticated blockchain mechanisms to ensure its secrecy and protection.  
 The players goal is to rediscover the forgotten artifact in the smart contract by reverse-engineering the original storing mechanism, before the Frontier Board finds it and claim possession for the sake of power and wealth.
 
-# Analyzing the Source Code
+## Analyzing the Source Code
 
-## `Setup.sol`
+### `Setup.sol`
 
 ```solidity
 // SPDX-License-Identifier: MIT
@@ -60,7 +64,7 @@ contract Setup {
 
 In order to satify the conditions to solve this challenge, the `lastSighting` storage variable of the target contract, should be set at a value higher that `ARTIFACT_ORIGIN`.
 
-## `ForgottenArtifact.sol`
+### `ForgottenArtifact.sol`
 The `ForgottenArtifact` smart contract was used to hide the artifact in its storage memory, by crafting a pseudo-generated storage pointer and using low level assembly to move the struct pointer of the artifact to that newly generated location.
 
 ```solidity
@@ -128,10 +132,10 @@ Although the logic for this one is pretty simple, we can avoid falling for silly
 However, the generation of this hash depends on block-specific variables (`block.number`, `block.timestamp`), meaning that, in order to reconstruct the correct hash, we need to recover the values for this variables used at the time of the contract creation.  
 In order to do so, we can use tools like [cast](https://book.getfoundry.sh/cast/), [web3py](https://web3py.readthedocs.io/en/stable/) to fetch past transactions details.
 
-# Exploitation
+## Exploitation
 To solve this challenge, we have to re-calculate the seed hash used as pointer to store the artifact, and pass is to the `discover()` function as argument in order to set `lastSighting` variable to a new block timestamp.
 
-## Step 1: get current block information
+### Step 1: get current block information
 
 ```sh
 ➜ cast block --rpc-url $RPC
@@ -162,7 +166,7 @@ transactions:        [
 We see that only 1 block is mined, and it's block number `1`, we needed that. The block contains only 1 transaction, possibly the contract creation. We can use `cast` again to fetch for detailed information using the provided transaction hash.  
 Another important value we can notice, is the `timestamp` param, giving us the `block.timestamp` value we needed (`1734026033`). 
 
-## Step 2: retrieve transaction details
+### Step 2: retrieve transaction details
 ```sh
 ➜ cast tx 0xf35c20de71490188ba89db398afdf07a7b3853e150fe0807cc4f266f7b2c613f --rpc-url $RPC
 accessList           []
@@ -200,12 +204,12 @@ Setup contract     : 0xd5CBC771f1148636AbE03472cFA7c4c7CBAc3B03
 [...]
 ```
 
-## Step 3: reconstruct `seed` hash
+### Step 3: reconstruct `seed` hash
 As we have everything we need to reconstruct the storage pointer used, i.e. the artifact location, we can finally use `chisel` to easily calculate the hash.
 
 ![](./assets/chisel_hash_calculation.png)
 
-## Step 4: call function `discover()` with the calculated hash
+### Step 4: call function `discover()` with the calculated hash
 At this point, we just need to call the `discover` function with the correct hash, i.e. the artifact storage location pointer.
 
 ```sh
@@ -243,7 +247,7 @@ Select action (enter number): 3
 HTB{y0u_c4n7_533_m3}
 ```
 
-# Bonus
+## Bonus
 We could also have done that using `web3py`:
 ```py
 [...]
