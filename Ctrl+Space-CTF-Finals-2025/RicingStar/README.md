@@ -20,10 +20,10 @@ The challenge is supposed to be about a Custom Theme Generator extension for Fir
 
 Upon visiting the challenge page, flying mhackeroni™ spaceshuttles are flying all over the screen, and switching to the "Editor" tab, users can customize their Ctrl+Space™ special edition them as their likings:  
 
-![extension landpage](./img/challenge_landpage.png "extension landpage")
+![extension landpage](./writeup/challenge_landpage.png "extension landpage")
 <figure>
   <video controls autoplay loading="lazy">
-    <source src="./img/mhackspacespam.mp4" type="video/mp4">
+    <source src="./writeup/mhackspacespam.mp4" type="video/mp4">
     Your browser does not support the video tag.
   </video>
   <figcaption>i had a bit too much fun with that :/</figcaption>
@@ -33,8 +33,8 @@ The page also invites users to download their customized theme and applying it m
 
 Flying mhackeroni™ spaceshuttles are now navigating in your chatgpt.com window! Actually, all of them!  
 
-![ctrl+space™ google.com](./img/google_theme.png "ctrl+space™ google.com")
-![ctrl+space™ chatgpt.com](./img/chatgpt_theme.png "Your favorite clanker mhackeroni™ themed")
+![ctrl+space™ google.com](./writeup/google_theme.png "ctrl+space™ google.com")
+![ctrl+space™ chatgpt.com](./writeup/chatgpt_theme.png "Your favorite clanker mhackeroni™ themed")
 
 We can now analyze the actual challenge sources after harassing our GPU \:)
 
@@ -210,7 +210,7 @@ Yes, but more legacy features are still available. One of them is the [`-moz-doc
 Ouch :/ Who ever thought that would be a good idea?  
 The feature as MDN documents, it's obviously non-standard, and was deprecated in Firefox after [Firefox bug 1035091](https://bugzilla.mozilla.org/show_bug.cgi?id=1035091) that exposed clear security issues with it. **However, the rule is still supported in Firefox user stylesheets!** 
 
-![-moz-document deprecation mdn](./img/moz-document_compat_table.png "-moz-document deprecation mdn")
+![-moz-document deprecation mdn](./writeup/moz-document_compat_table.png "-moz-document deprecation mdn")
 
 ***And since we can define "USER" origin stylesheets within `insertCSS` API, we could use it to exfiltrate the flag from the challenge page URL.***  
 
