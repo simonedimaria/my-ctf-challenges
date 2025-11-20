@@ -15,6 +15,7 @@ My authored CTF challenges sources and official writeups.
 
 
 
+
 <!-- CHALLENGES:EVENT=HTB-BusinessCTF-2024:START -->
 ### HTB-BusinessCTF-2024
 
@@ -24,6 +25,7 @@ My authored CTF challenges sources and official writeups.
 | [HTB Business CTF 2024 - MetaVault [Author Writeup]](HTB-BusinessCTF-2024/MetaVault) | blockchain | easy | authored, metadata, IPFS |
 | [HTB Business CTF 2024 - Recruitment [Author Writeup]](HTB-BusinessCTF-2024/Recruitment) | blockchain | very-easy | authored, warmup |
 <!-- CHALLENGES:EVENT=HTB-BusinessCTF-2024:END -->
+
 
 
 
@@ -38,6 +40,7 @@ My authored CTF challenges sources and official writeups.
 <!-- CHALLENGES:EVENT=HTB-CyberApocalypse-2024:END -->
 
 
+
 <!-- CHALLENGES:EVENT=HTB-BusinessCTF-2025:START -->
 ### HTB-BusinessCTF-2025
 
@@ -47,6 +50,7 @@ My authored CTF challenges sources and official writeups.
 | [HTB Business CTF 2025 - Spectral [Author Writeup]](HTB-BusinessCTF-2025/Spectral) | blockchain | easy | authored, pectra, tx.origin, reentrancy, EIP-7702 |
 | [HTB Business CTF 2025 - Enlistment [Author Writeup]](HTB-BusinessCTF-2025/Enlistment) | blockchain | very-easy | authored, warmup, EVM, private-visibility, storage |
 <!-- CHALLENGES:EVENT=HTB-BusinessCTF-2025:END -->
+
 
 
 <!-- CHALLENGES:EVENT=HTB-CyberApocalypse-2025:START -->
@@ -60,6 +64,7 @@ My authored CTF challenges sources and official writeups.
 <!-- CHALLENGES:EVENT=HTB-CyberApocalypse-2025:END -->
 
 
+
 <!-- CHALLENGES:EVENT=HTB-UniversityCTF-2024:START -->
 ### HTB-UniversityCTF-2024
 
@@ -71,3 +76,12 @@ My authored CTF challenges sources and official writeups.
 | [HTB University CTF 2024 - CryoPod [Author Writeup]](HTB-UniversityCTF-2024/CryoPod) | blockchain | very-easy | authored, warmup, events |
 <!-- CHALLENGES:EVENT=HTB-UniversityCTF-2024:END -->
 
+
+
+<!-- CHALLENGES:EVENT=Ctrl+Space-CTF-Finals-2025:START -->
+### Ctrl+Space-CTF-Finals-2025
+
+| Title | Category | Difficulty | Tags |
+| ----- | -------- | ---------- | ---- |
+| [Ctrl+Space CTF Finals 2025 - RicingStar [Author Writeup]](Ctrl+Space-CTF-Finals-2025/RicingStar) | web | medium | authored, client-side, firefox, extensions |
+<!-- CHALLENGES:EVENT=Ctrl+Space-CTF-Finals-2025:END -->
