@@ -9,6 +9,10 @@ print(f"Repository root: {REPO_ROOT}")
 
 MARKER_START_RE = re.compile(r"<!--\s*CHALLENGES:EVENT=([^:>]+):START\s*-->")
 MARKER_END_TEMPLATE = "<!-- CHALLENGES:EVENT={event}:END -->"
+EVENT_BLOCK_RE = re.compile(
+    r"<!--\s*CHALLENGES:EVENT=([^:>]+):START\s*-->.*?<!--\s*CHALLENGES:EVENT=\1:END\s*-->",
+    re.DOTALL,
+)
 
 def read_front_matter(md_path: Path):
     text = md_path.read_text(encoding="utf-8")
@@ -52,9 +56,9 @@ def collect_challenges():
                             "tags": meta.get("tags", []),
                             "dir": challenge_dir_rel,
                         })
-        # sort challenges by date desc (blank dates go last)
+        # sort challenges by date desc (most recent first, blank dates last)
         def sort_key(c):
-            return c["date"] or "0000-00-00"
+            return (bool(c["date"]), c["date"] or "")
         challenges.sort(key=sort_key, reverse=True)
         result[event_dir.name] = challenges
     return result
@@ -77,38 +81,36 @@ def render_table_for_event(event_name, challenges):
                 f"| {title_link} | {cats} | {ch['difficulty']} | {tags} |"
             )
     lines.append(f"<!-- CHALLENGES:EVENT={event_name}:END -->")
-    lines.append("")
     return "\n".join(lines)
+
+def event_latest_date(challenges):
+    dated = [ch.get("date") for ch in challenges if ch.get("date")]
+    return max(dated) if dated else ""
+
+def sort_events(challenges_by_event):
+    ordered = sorted(challenges_by_event.items(), key=lambda item: item[0])
+    ordered.sort(key=lambda item: event_latest_date(item[1]), reverse=True)
+    return ordered
 
 def update_root_readme(challenges_by_event):
     if not ROOT_README.exists():
         raise SystemExit("Root README.md not found, aborting.")
 
     original = ROOT_README.read_text(encoding="utf-8")
-    updated = original
+    ordered_events = sort_events(challenges_by_event)
+    rendered_section = "\n\n\n\n".join(
+        render_table_for_event(event_name, challenges)
+        for event_name, challenges in ordered_events
+    )
 
-    # we'll iterate over events and either replace existing blocks or append at the end
-    for event_name, challenges in challenges_by_event.items():
-        start_pat = re.compile(rf"<!--\s*CHALLENGES:EVENT={re.escape(event_name)}:START\s*-->")
-        end_pat = re.compile(rf"<!--\s*CHALLENGES:EVENT={re.escape(event_name)}:END\s*-->")
-
-        new_block = render_table_for_event(event_name, challenges)
-
-        start_match = start_pat.search(updated)
-        end_match = end_pat.search(updated)
-
-        if start_match and end_match:
-            # replace the whole block
-            updated = (
-                updated[:start_match.start()]
-                + new_block
-                + updated[end_match.end():]
-            )
-        else:
-            # append at the end
-            if not updated.endswith("\n"):
-                updated += "\n"
-            updated += "\n" + new_block
+    block_matches = list(EVENT_BLOCK_RE.finditer(original))
+    if block_matches:
+        prefix = original[:block_matches[0].start()].rstrip()
+        suffix = original[block_matches[-1].end():].strip()
+        parts = [p for p in [prefix, rendered_section, suffix] if p]
+        updated = "\n\n".join(parts) + "\n"
+    else:
+        updated = original.rstrip() + "\n\n" + rendered_section + "\n"
 
     if updated != original:
         ROOT_README.write_text(updated, encoding="utf-8")
