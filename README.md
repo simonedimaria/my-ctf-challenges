@@ -29,9 +29,9 @@ My authored CTF challenges sources and official writeups.
 
 | Title | Category | Difficulty | Tags |
 | ----- | -------- | ---------- | ---- |
-| [HTB Cyber Apocalypse 2025 - Eldorion [Author Writeup]](HTB-CyberApocalypse-2025/Eldorion) | blockchain | very-easy | authored, warmup, multicall, EIP-7702 |
-| [HTB Cyber Apocalypse 2025 - EldoriaGate [Author Writeup]](HTB-CyberApocalypse-2025/EldoriaGate) | blockchain | medium | authored, EVM, yul, type-checker, unsafe-casting, private-visibility |
 | [HTB Cyber Apocalypse 2025 - HeliosDEX [Author Writeup]](HTB-CyberApocalypse-2025/HeliosDEX) | blockchain | easy | authored, DEX, rounding, unsafe-arithmetic |
+| [HTB Cyber Apocalypse 2025 - EldoriaGate [Author Writeup]](HTB-CyberApocalypse-2025/EldoriaGate) | blockchain | medium | authored, EVM, yul, type-checker, unsafe-casting, private-visibility |
+| [HTB Cyber Apocalypse 2025 - Eldorion [Author Writeup]](HTB-CyberApocalypse-2025/Eldorion) | blockchain | very-easy | authored, warmup, multicall, EIP-7702 |
 <!-- CHALLENGES:EVENT=HTB-CyberApocalypse-2025:END -->
 
 
@@ -66,9 +66,9 @@ My authored CTF challenges sources and official writeups.
 
 | Title | Category | Difficulty | Tags |
 | ----- | -------- | ---------- | ---- |
-| [HTB CyberApocalypse 2024 - LuckyFaucet [Author Writeup]](HTB-CyberApocalypse-2024/LuckyFaucet) | blockchain | easy | authored, unsafe-casting, integer-underflow |
-| [HTB CyberApocalypse 2024 - Recovery [Author Writeup]](HTB-CyberApocalypse-2024/Recovery) | blockchain | very-easy | authored, warmup, bitcoin, electrum |
 | [HTB CyberApocalypse 2024 - RussianRoulette [Author Writeup]](HTB-CyberApocalypse-2024/RussianRoulette) | blockchain | very-easy | authored, warmup, randomness |
+| [HTB CyberApocalypse 2024 - Recovery [Author Writeup]](HTB-CyberApocalypse-2024/Recovery) | blockchain | very-easy | authored, warmup, bitcoin, electrum |
+| [HTB CyberApocalypse 2024 - LuckyFaucet [Author Writeup]](HTB-CyberApocalypse-2024/LuckyFaucet) | blockchain | easy | authored, unsafe-casting, integer-underflow |
 <!-- CHALLENGES:EVENT=HTB-CyberApocalypse-2024:END -->
 
 
